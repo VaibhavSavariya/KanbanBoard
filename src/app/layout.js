@@ -2,6 +2,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "@/theme";
+import { QueryProviders } from "./QueryProvider";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,10 +16,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          {children}
-        </ThemeProvider>
+        <QueryProviders>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Toaster />
+            {children}
+          </ThemeProvider>
+        </QueryProviders>
       </body>
     </html>
   );
