@@ -20,9 +20,16 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import toast from "react-hot-toast";
+import useStore from "@/store";
+import Loader from "@/app/components/layout/loader/loader";
+import { useRouter } from "next/navigation";
 const Login = () => {
+  const Router = useRouter();
+  const { loader, setLoginState, isLoggedIn } = useStore();
+  console.log("loader:", loader);
+  console.log("isLoggedIn:", isLoggedIn);
   const [loading, setLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedInPage, setIsLoggedInPage] = useState(true);
   // const { isPending, data } = useQuery({
   //   queryKey: ["userDoc"],
   //   queryFn: onAuthStateChanged(auth, (userDoc) => {
@@ -31,12 +38,9 @@ const Login = () => {
   //     } else return null;
   //   }),
   // });
-
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (userDoc) => {
-      if (userDoc) {
-        return console.log("userDoc", userDoc);
-      } else return null;
+      setLoginState(!!userDoc);
     });
 
     return () => unSub;
@@ -72,22 +76,26 @@ const Login = () => {
             onSubmit={async (values, { setSubmitting }) => {
               try {
                 setLoading(true);
-                if (isLoggedIn) {
+                if (isLoggedInPage) {
                   await signInWithEmailAndPassword(
                     auth,
                     values.email,
                     values.password
                   );
+                  Router.push("/boards");
+                  Router.refresh();
                 } else {
                   await createUserWithEmailAndPassword(
                     auth,
                     values.email,
                     values.password
                   );
+                  Router.push("/boards");
+                  Router.refresh();
                 }
               } catch (err) {
                 setLoading(false);
-                const msg = err.code.split("auth/")[1].split("-").join(" ");
+                const msg = err?.code?.split("auth/")[1].split("-").join(" ");
                 return toast.error(msg);
               }
             }}
@@ -133,19 +141,22 @@ const Login = () => {
                       </p>
                     )}
                   />
-                  {/* {isSubmitting && <LinearProgress />} */}
-                  <Button
-                    variant="contained"
-                    size="large"
-                    disabled={isSubmitting}
-                    onClick={submitForm}
-                  >
-                    {isLoggedIn ? "Login" : "Register"}
-                  </Button>
+                  {isSubmitting ? (
+                    <Loader />
+                  ) : (
+                    <Button
+                      variant="contained"
+                      size="large"
+                      disabled={isSubmitting}
+                      onClick={submitForm}
+                    >
+                      {isLoggedInPage ? "Login" : "Register"}
+                    </Button>
+                  )}
                 </Stack>
                 <Typography
                   onClick={() => {
-                    setIsLoggedIn(!isLoggedIn);
+                    setIsLoggedInPage(!isLoggedInPage);
                   }}
                   sx={{
                     cursor: "pointer",
@@ -153,7 +164,7 @@ const Login = () => {
                   textAlign={"center"}
                   mt={3}
                 >
-                  {isLoggedIn
+                  {isLoggedInPage
                     ? "Do no have an account?"
                     : "Already have an account?"}
                 </Typography>
