@@ -23,6 +23,7 @@ import toast from "react-hot-toast";
 import useStore from "@/store";
 import Loader from "@/app/components/layout/loader/loader";
 import { useRouter } from "next/navigation";
+import secureLocalStorage from "react-secure-storage";
 const Login = () => {
   const Router = useRouter();
   const { loader, setLoginState, isLoggedIn } = useStore();
@@ -40,7 +41,9 @@ const Login = () => {
   // });
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (userDoc) => {
+      console.log("userDoc:", userDoc);
       setLoginState(!!userDoc);
+      secureLocalStorage.setItem("Me", JSON.stringify(userDoc?.uid));
     });
 
     return () => unSub;
@@ -83,7 +86,7 @@ const Login = () => {
                     values.password
                   );
                   Router.push("/boards");
-                  Router.refresh();
+                  // Router.refresh();
                 } else {
                   await createUserWithEmailAndPassword(
                     auth,
@@ -91,7 +94,7 @@ const Login = () => {
                     values.password
                   );
                   Router.push("/boards");
-                  Router.refresh();
+                  // Router.refresh();
                 }
               } catch (err) {
                 setLoading(false);

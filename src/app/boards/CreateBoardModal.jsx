@@ -1,10 +1,8 @@
 "use client";
-import { Close } from "@mui/icons-material";
 import {
   Box,
   Button,
   Dialog,
-  IconButton,
   Stack,
   TextField,
   Typography,
@@ -12,10 +10,25 @@ import {
 import React, { useState } from "react";
 import ModalHeader from "../components/layout/ModalHeader";
 import { colors } from "@/theme";
+import useApp from "../hooks/useApp";
 
 const CreateBoardModal = ({ onClose }) => {
+  const { createBoard } = useApp();
   const [boardName, setBoardName] = useState("");
   const [color, setColor] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const handleCreate = async () => {
+    setLoading(true);
+    try {
+      if (boardName?.length > 0) {
+        await createBoard(boardName, color);
+        onClose();
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log("error:", error);
+    }
+  };
   return (
     <>
       <Dialog open fullWidth maxWidth="xs">
@@ -47,7 +60,13 @@ const CreateBoardModal = ({ onClose }) => {
               ))}
             </Stack>
           </Stack>
-          <Button size="large" variant="contained">
+
+          <Button
+            disabled={loading || boardName?.length < 3}
+            onClick={handleCreate}
+            size="large"
+            variant="contained"
+          >
             Create
           </Button>
         </Stack>
