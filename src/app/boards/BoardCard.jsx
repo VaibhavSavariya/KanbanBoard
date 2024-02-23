@@ -7,7 +7,7 @@ import React from "react";
 const BoardCard = ({ board, router }) => {
   return (
     <>
-      <Grid item xs={3}>
+      <Grid item xs={12} sm={3}>
         <Stack
           bgcolor={"black"}
           borderLeft={`5px solid`}
@@ -33,7 +33,7 @@ const BoardCard = ({ board, router }) => {
 
             <IconButton
               onClick={() => {
-                router.push(`/boards/${board?.id}?name=${board?.name}`);
+                router.push(`/boards/${board?.id}`);
               }}
               size="small"
             >

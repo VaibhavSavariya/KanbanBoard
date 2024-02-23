@@ -4,6 +4,7 @@ import useStore from "@/store";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -12,11 +13,13 @@ import {
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import secureLocalStorage from "react-secure-storage";
 
 const useApp = () => {
-  const { setBoards, addBoard } = useStore();
+  const { boards, setBoards, addBoard } = useStore();
+  const router = useRouter();
   const uid = JSON.parse(secureLocalStorage.getItem("Me"));
 
   const boardsColRef = collection(db, `users/${uid}/boards`);
@@ -36,7 +39,8 @@ const useApp = () => {
       });
       toast.success("Board Created Successfully!");
     } catch (error) {
-      console.log("error:", error);
+      toast.error("Error creating board data");
+      throw error;
     }
   };
 
@@ -45,7 +49,8 @@ const useApp = () => {
     try {
       await updateDoc(DocRef, { tabs, lastUpdated: serverTimestamp() });
     } catch (error) {
-      console.log("error:", error);
+      toast.error("Error updating board data");
+      throw error;
     }
   };
 
@@ -57,7 +62,8 @@ const useApp = () => {
         return res.data();
       }
     } catch (error) {
-      console.log("error:", error);
+      toast.error("Error fetching board data");
+      throw error;
     }
   };
 
@@ -81,11 +87,25 @@ const useApp = () => {
     }
   };
 
+  const deleteBoard = async (boardId) => {
+    try {
+      const DocRef = doc(db, `users/${uid}/boardsData/${boardId}`);
+      await deleteDoc(DocRef);
+      const tBoards = boards.filter((board) => board?.id !== boardId);
+      setBoards(tBoards);
+      router.push("/boards");
+    } catch (error) {
+      toast.error("Error deleting board data");
+      throw error;
+    }
+  };
+
   return {
     createBoard,
     fetchBoards,
     fetchBoard,
     updateBoardData,
+    deleteBoard,
   };
 };
 

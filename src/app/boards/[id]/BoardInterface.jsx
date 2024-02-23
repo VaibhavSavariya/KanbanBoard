@@ -5,6 +5,9 @@ import React, { useCallback, useState } from "react";
 import BoardTab from "./BoardTab";
 import AddTaskModal from "./AddTaskModal";
 import useApp from "@/app/hooks/useApp";
+import { DragDropContext } from "react-beautiful-dnd";
+import Loader from "@/app/components/layout/loader/Loader";
+import toast from "react-hot-toast";
 const tabs = {
   todo: "Todos",
   inProgress: "In Progress",
@@ -15,6 +18,7 @@ const BoardInterface = ({ tabsData, boardId, updateLastUpdated }) => {
   const { updateBoardData } = useApp();
   const [cloneTabs, setCloneTabs] = useState(structuredClone(tabsData));
   const [addTaskLoading, setAddTaskLoading] = useState(false);
+  const [dragTaskLoading, setDragTaskLoading] = useState(false);
   const handleOpenAddTaskModal = useCallback((tab) => setAddTaskTo(tab), []);
   const handleAddTask = async (taskName) => {
     setAddTaskLoading(true);
@@ -26,23 +30,58 @@ const BoardInterface = ({ tabsData, boardId, updateLastUpdated }) => {
       setAddTaskTo("");
       updateLastUpdated();
       setAddTaskLoading(false);
+      toast.success("Task Created Successfully!");
     } catch (error) {
       console.log("error:", error);
       setAddTaskLoading(false);
     }
   };
-  const handleRemoveTask = useCallback(async (tab, taskId) => {
+  const handleRemoveTask = useCallback(
+    async (tab, taskId) => {
+      const dClone = structuredClone(cloneTabs);
+      const taskIdx = dClone[tab].findIndex((t) => t.id === taskId);
+      dClone[tab].splice(taskIdx, 1);
+      try {
+        await updateBoardData(boardId, dClone);
+        setCloneTabs(dClone);
+        updateLastUpdated();
+        toast.success("Task deleted successfully!");
+      } catch (error) {
+        console.log("error:", error);
+      }
+    },
+    [cloneTabs]
+  );
+
+  const handleDnd = async ({ destination, source }) => {
+    setDragTaskLoading(true);
+    if (!destination) {
+      setDragTaskLoading(false);
+      return;
+    }
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
+      setDragTaskLoading(false);
+      return;
+    }
     const dClone = structuredClone(cloneTabs);
-    const taskIdx = dClone[tab].findIndex((t) => t.id === taskId);
-    dClone[tab].splice(taskIdx, 1);
+    //remove the task from tab 1
+    const [draggedTask] = dClone[source?.droppableId].splice(source?.index, 1);
+    // add it to another task
+    dClone[destination.droppableId].splice(destination.index, 0, draggedTask);
     try {
       await updateBoardData(boardId, dClone);
       setCloneTabs(dClone);
       updateLastUpdated();
+      setDragTaskLoading(false);
+      toast.success("Task moved successfully!");
     } catch (error) {
+      setDragTaskLoading(false);
       console.log("error:", error);
     }
-  }, []);
+  };
 
   return (
     <>
@@ -54,18 +93,28 @@ const BoardInterface = ({ tabsData, boardId, updateLastUpdated }) => {
           addTaskLoading={addTaskLoading}
         />
       )}
-      <Grid container px={2} mt={5} spacing={2}>
-        {Object.keys(tabs).map((tab) => (
-          <BoardTab
-            tasks={cloneTabs[tab]}
-            addTask={handleOpenAddTaskModal}
-            key={tab}
-            name={tabs[tab]}
-            tab={tab}
-            removeTask={handleRemoveTask}
-          />
-        ))}
-      </Grid>
+      {dragTaskLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <DragDropContext onDragEnd={handleDnd}>
+            <Grid container px={2} mt={5} spacing={2}>
+              {Object.keys(tabs).map((tab) => (
+                <>
+                  <BoardTab
+                    tasks={cloneTabs[tab]}
+                    addTask={handleOpenAddTaskModal}
+                    key={tab}
+                    name={tabs[tab]}
+                    tab={tab}
+                    removeTask={handleRemoveTask}
+                  />
+                </>
+              ))}
+            </Grid>
+          </DragDropContext>
+        </>
+      )}
     </>
   );
 };
