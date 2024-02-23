@@ -4,10 +4,13 @@ import useStore from "@/store";
 import {
   addDoc,
   collection,
+  doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
 import toast from "react-hot-toast";
 import secureLocalStorage from "react-secure-storage";
@@ -20,13 +23,39 @@ const useApp = () => {
 
   const createBoard = async (name, color) => {
     try {
-      await addDoc(boardsColRef, {
+      const doc = await addDoc(boardsColRef, {
         name,
         color,
         createdAt: serverTimestamp(),
       });
-      addBoard({ name, color, createdAt: new Date().toLocaleString("en-US") });
+      addBoard({
+        name,
+        color,
+        createdAt: new Date().toLocaleString("en-US"),
+        id: doc?.id,
+      });
       toast.success("Board Created Successfully!");
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
+  const updateBoardData = async (boardId, tabs) => {
+    const DocRef = doc(db, `users/${uid}/boardsData/${boardId}`);
+    try {
+      await updateDoc(DocRef, { tabs, lastUpdated: serverTimestamp() });
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
+  const fetchBoard = async (boardId) => {
+    const DocRef = doc(db, `users/${uid}/boardsData/${boardId}`);
+    try {
+      const res = await getDoc(DocRef);
+      if (res.exists) {
+        return res.data();
+      }
     } catch (error) {
       console.log("error:", error);
     }
@@ -55,6 +84,8 @@ const useApp = () => {
   return {
     createBoard,
     fetchBoards,
+    fetchBoard,
+    updateBoardData,
   };
 };
 

@@ -144,18 +144,15 @@ const Login = () => {
                       </p>
                     )}
                   />
-                  {isSubmitting ? (
-                    <Loader />
-                  ) : (
-                    <Button
-                      variant="contained"
-                      size="large"
-                      disabled={isSubmitting}
-                      onClick={submitForm}
-                    >
-                      {isLoggedInPage ? "Login" : "Register"}
-                    </Button>
-                  )}
+
+                  <Button
+                    variant="contained"
+                    size="large"
+                    disabled={isSubmitting || loading}
+                    onClick={submitForm}
+                  >
+                    {isLoggedInPage ? "Login" : "Register"}
+                  </Button>
                 </Stack>
                 <Typography
                   onClick={() => {

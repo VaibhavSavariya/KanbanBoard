@@ -18,7 +18,8 @@ const store = (set) => ({
     ),
   setBoards: (boards) =>
     set({ boards, areBoardsFetched: true }, false, "setBoards"),
-  addBoard: (board) => set(({ boards }) => ({ boards: [board, ...boards] })),
+  addBoard: (board) =>
+    set(({ boards }) => ({ boards: [board, ...boards] }), false, "addBoard"),
 });
 const useStore = create(devtools(store));
 export default useStore;

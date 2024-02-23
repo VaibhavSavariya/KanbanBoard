@@ -8,17 +8,15 @@ import useStore from "@/store";
 import useApp from "../hooks/useApp";
 import NoBoards from "./NoBoards";
 import Loader from "../components/layout/loader/Loader";
+import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 
 const Boards = () => {
   const { boards, areBoardsFetched } = useStore();
-  console.log("boards:", boards);
+  const router = useRouter();
   const { fetchBoards } = useApp();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const boardObj = {
-    name: "Todo Board",
-    createdAt: "09/05/2024",
-  };
 
   useEffect(() => {
     if (!areBoardsFetched) {
@@ -39,7 +37,7 @@ const Boards = () => {
             <Grid container spacing={4}>
               {boards.map((board, index) => (
                 <>
-                  <BoardCard board={board} key={board?.id} />
+                  <BoardCard board={board} key={board?.id} router={router} />
                 </>
               ))}
             </Grid>

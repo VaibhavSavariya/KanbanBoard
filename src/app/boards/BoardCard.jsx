@@ -1,9 +1,10 @@
 import { colors } from "@/theme";
 import { OpenInNew } from "@mui/icons-material";
 import { Box, Grid, IconButton, Stack, Typography } from "@mui/material";
+import dynamic from "next/dynamic";
 import React from "react";
 
-const BoardCard = ({ board }) => {
+const BoardCard = ({ board, router }) => {
   return (
     <>
       <Grid item xs={3}>
@@ -30,7 +31,12 @@ const BoardCard = ({ board }) => {
               </Typography>
             </Box>
 
-            <IconButton size="small">
+            <IconButton
+              onClick={() => {
+                router.push(`/boards/${board?.id}?name=${board?.name}`);
+              }}
+              size="small"
+            >
               <OpenInNew />
             </IconButton>
           </Stack>
