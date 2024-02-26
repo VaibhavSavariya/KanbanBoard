@@ -7,9 +7,10 @@ import BoardCard from "./BoardCard";
 import useStore from "@/store";
 import useApp from "../hooks/useApp";
 import NoBoards from "./NoBoards";
-import Loader from "../components/layout/loader/Loader";
+import AppLoader from "../components/layout/loader/AppLoader";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { getAuth } from "firebase/auth";
 
 const Boards = () => {
   const { boards, areBoardsFetched } = useStore();
@@ -30,7 +31,7 @@ const Boards = () => {
       {showModal && <CreateBoardModal onClose={() => setShowModal(false)} />}
       {boards?.length === 0 && !loading && <NoBoards />}
       {loading ? (
-        <Loader />
+        <AppLoader />
       ) : (
         <>
           <Stack px={3} mt={5}>

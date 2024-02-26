@@ -21,24 +21,15 @@ import {
 } from "firebase/auth";
 import toast from "react-hot-toast";
 import useStore from "@/store";
-import Loader from "@/app/components/layout/loader/loader";
+import AppLoader from "@/app/components/layout/loader/AppLoader";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 const Login = () => {
   const Router = useRouter();
   const { loader, setLoginState, isLoggedIn } = useStore();
-  console.log("loader:", loader);
-  console.log("isLoggedIn:", isLoggedIn);
   const [loading, setLoading] = useState(false);
   const [isLoggedInPage, setIsLoggedInPage] = useState(true);
-  // const { isPending, data } = useQuery({
-  //   queryKey: ["userDoc"],
-  //   queryFn: onAuthStateChanged(auth, (userDoc) => {
-  //     if (userDoc) {
-  //       return console.log("userDoc", userDoc);
-  //     } else return null;
-  //   }),
-  // });
+
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (userDoc) => {
       console.log("userDoc:", userDoc);
@@ -80,13 +71,26 @@ const Login = () => {
               try {
                 setLoading(true);
                 if (isLoggedInPage) {
-                  await signInWithEmailAndPassword(
+                  const userCredential = await signInWithEmailAndPassword(
                     auth,
                     values.email,
                     values.password
                   );
+                  const { user } = userCredential;
+                  const jwt = await user.getIdToken();
+                  const rawResponse = await fetch("/api/login", {
+                    method: "POST",
+                    headers: {
+                      Accept: "application/json",
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ jwt }),
+                  });
+                  const content = await rawResponse.json();
+
+                  console.log(content);
                   Router.push("/boards");
-                  // Router.refresh();
+                  Router.refresh();
                 } else {
                   await createUserWithEmailAndPassword(
                     auth,

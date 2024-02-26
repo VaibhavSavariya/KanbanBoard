@@ -18,6 +18,17 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 const Topbar = ({ openModal }) => {
   const router = useRouter();
   const isXs = useMediaQuery((theme) => theme.breakpoints.only("xs"));
+  const handleLogOut = async () => {
+    try {
+      await signOut(auth);
+      const res = await fetch("/api/logout");
+      secureLocalStorage.removeItem("Me");
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
   return (
     <>
       <AppBar position="static">
@@ -33,14 +44,7 @@ const Topbar = ({ openModal }) => {
                 <IconButton onClick={openModal}>
                   <AddCircleIcon color="primary" />
                 </IconButton>
-                <IconButton
-                  onClick={() => {
-                    signOut(auth);
-                    secureLocalStorage.removeItem("Me");
-                    router.push("/login");
-                    router.refresh();
-                  }}
-                >
+                <IconButton onClick={handleLogOut}>
                   <Logout />
                 </IconButton>
               </>
@@ -51,12 +55,7 @@ const Topbar = ({ openModal }) => {
                 </Button>
 
                 <Button
-                  onClick={() => {
-                    signOut(auth);
-                    secureLocalStorage.removeItem("Me");
-                    router.push("/login");
-                    router.refresh();
-                  }}
+                  onClick={handleLogOut}
                   startIcon={<Logout />}
                   color="inherit"
                 >

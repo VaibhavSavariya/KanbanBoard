@@ -6,7 +6,7 @@ import BoardTab from "./BoardTab";
 import AddTaskModal from "./AddTaskModal";
 import useApp from "@/app/hooks/useApp";
 import { DragDropContext } from "react-beautiful-dnd";
-import Loader from "@/app/components/layout/loader/Loader";
+import AppLoader from "@/app/components/layout/loader/AppLoader";
 import toast from "react-hot-toast";
 const tabs = {
   todo: "Todos",
@@ -94,7 +94,7 @@ const BoardInterface = ({ tabsData, boardId, updateLastUpdated }) => {
         />
       )}
       {dragTaskLoading ? (
-        <Loader />
+        <AppLoader />
       ) : (
         <>
           <DragDropContext onDragEnd={handleDnd}>

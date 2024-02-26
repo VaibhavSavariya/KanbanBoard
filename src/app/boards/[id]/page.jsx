@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import BoardInterface from "./BoardInterface";
 import useStore from "@/store";
 import useApp from "@/app/hooks/useApp";
-import Loader from "@/app/components/layout/loader/Loader";
+import AppLoader from "@/app/components/layout/loader/AppLoader";
 import AlertDialogSlide from "./AlertModal";
 
 const BoardId = ({ params }) => {
@@ -73,7 +73,7 @@ const BoardId = ({ params }) => {
         />
       )}
       {loading ? (
-        <Loader />
+        <AppLoader />
       ) : (
         <>
           <BoardTopBar
