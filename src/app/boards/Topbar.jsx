@@ -24,7 +24,7 @@ const Topbar = ({ openModal }) => {
       const res = await fetch("/api/logout");
       secureLocalStorage.removeItem("Me");
       router.push("/login");
-      router.refresh();
+      // router.refresh();
     } catch (error) {
       console.log("error:", error);
     }

@@ -24,6 +24,7 @@ const Boards = () => {
       fetchBoards(setLoading);
     } else setLoading(false);
   }, []);
+  console.log(typeof process.env.MONGO_URI);
 
   return (
     <>
