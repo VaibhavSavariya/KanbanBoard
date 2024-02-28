@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import Topbar from "./Topbar";
 import CreateBoardModal from "./CreateBoardModal";
 import { Grid, Stack } from "@mui/material";
@@ -9,8 +9,8 @@ import useApp from "../hooks/useApp";
 import NoBoards from "./NoBoards";
 import AppLoader from "../components/layout/loader/AppLoader";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
-import { getAuth } from "firebase/auth";
+import boardsAPI from "../axios/services/boards";
+import { useQuery } from "@tanstack/react-query";
 
 const Boards = () => {
   const { boards, areBoardsFetched } = useStore();
@@ -24,7 +24,6 @@ const Boards = () => {
       fetchBoards(setLoading);
     } else setLoading(false);
   }, []);
-  console.log(typeof process.env.MONGO_URI);
 
   return (
     <>
@@ -39,7 +38,7 @@ const Boards = () => {
             <Grid container spacing={{ xs: 2, sm: 4 }}>
               {boards.map((board, index) => (
                 <>
-                  <BoardCard board={board} key={board?.id} router={router} />
+                  <BoardCard board={board} key={board?._id} router={router} />
                 </>
               ))}
             </Grid>
@@ -50,4 +49,4 @@ const Boards = () => {
   );
 };
 
-export default Boards;
+export default memo(Boards);

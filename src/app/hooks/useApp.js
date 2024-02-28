@@ -16,30 +16,25 @@ import {
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import secureLocalStorage from "react-secure-storage";
+import boardsAPI from "../axios/services/boards";
 
 const useApp = () => {
   const { boards, setBoards, addBoard } = useStore();
   const router = useRouter();
   const uid = JSON.parse(secureLocalStorage.getItem("Me"));
-
   const boardsColRef = collection(db, `users/${uid}/boards`);
 
   const createBoard = async (name, color) => {
     try {
-      const doc = await addDoc(boardsColRef, {
+      const create = await boardsAPI.createBoard({
         name,
         color,
-        createdAt: serverTimestamp(),
+        userRef: uid,
       });
-      addBoard({
-        name,
-        color,
-        createdAt: new Date().toLocaleString("en-US"),
-        id: doc?.id,
-      });
+      addBoard(create?.data?.board);
       toast.success("Board Created Successfully!");
     } catch (error) {
-      toast.error("Error creating board data");
+      // toast.error("Error creating board data");
       throw error;
     }
   };
@@ -55,11 +50,10 @@ const useApp = () => {
   };
 
   const fetchBoard = async (boardId) => {
-    const DocRef = doc(db, `users/${uid}/boardsData/${boardId}`);
     try {
-      const res = await getDoc(DocRef);
-      if (res.exists) {
-        return res.data();
+      const res = await boardsAPI.getBoardById(boardId);
+      if (res.status === 200) {
+        return res.data?.boardById;
       }
     } catch (error) {
       toast.error("Error fetching board data");
@@ -69,17 +63,12 @@ const useApp = () => {
 
   const fetchBoards = async (setLoading) => {
     try {
-      const q = query(boardsColRef, orderBy("createdAt", "desc"));
-      const querySnapshot = await getDocs(q);
-      const boards = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-        createdAt: doc.data().createdAt.toDate().toLocaleString("en-US"),
-      }));
-
-      setBoards(boards);
-    } catch (err) {
+      const res = await boardsAPI.getBoards();
+      console.log("res:", res);
+      setBoards(res?.data?.boards);
+    } catch (error) {
       toast.error("Error fetching boards");
+      console.log("error:", error);
     } finally {
       if (setLoading) {
         setLoading(false);

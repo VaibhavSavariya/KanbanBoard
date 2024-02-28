@@ -7,6 +7,7 @@ import useStore from "@/store";
 import useApp from "@/app/hooks/useApp";
 import AppLoader from "@/app/components/layout/loader/AppLoader";
 import AlertDialogSlide from "./AlertModal";
+import moment from "moment";
 
 const BoardId = ({ params }) => {
   console.log("params:", params);
@@ -16,7 +17,7 @@ const BoardId = ({ params }) => {
   const [lastUpdated, setLastUpdated] = useState(null);
   const { fetchBoard, deleteBoard } = useApp();
   const currentBoard = useMemo(
-    () => boards?.find((board) => board?.id === params?.id),
+    () => boards?.find((board) => board?._id === params?.id),
     []
   );
   const [loading, setLoading] = useState(true);
@@ -32,14 +33,12 @@ const BoardId = ({ params }) => {
     []
   );
   const handleFetchBoard = async () => {
-    console.log("first");
     try {
       const boardData = await fetchBoard(params?.id);
       if (boardData) {
-        const { lastUpdated, tabs } = boardData;
-        console.log("lastUpdated:", lastUpdated);
+        const { updatedAt, tabs } = boardData;
         setData(tabs);
-        setLastUpdated(lastUpdated.toDate().toLocaleString("en-US"));
+        setLastUpdated(moment(updatedAt).format("lll"));
         setLoading(false);
       }
     } catch (error) {

@@ -10,25 +10,23 @@ import Image from "next/image";
 import React from "react";
 import LogoImg from "../assets/logo.svg";
 import { Logout } from "@mui/icons-material";
-import { signOut } from "firebase/auth";
-import { auth } from "@/firebase";
-import secureLocalStorage from "react-secure-storage";
 import { useRouter } from "next/navigation";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import users from "../axios/services/users";
 const Topbar = ({ openModal }) => {
   const router = useRouter();
   const isXs = useMediaQuery((theme) => theme.breakpoints.only("xs"));
   const handleLogOut = async () => {
     try {
-      await signOut(auth);
-      const res = await fetch("/api/logout");
-      secureLocalStorage.removeItem("Me");
+      const res = await users.signOut();
+      console.log("res:", res);
       router.push("/login");
-      // router.refresh();
+      router.refresh();
     } catch (error) {
       console.log("error:", error);
     }
   };
+
   return (
     <>
       <AppBar position="static">

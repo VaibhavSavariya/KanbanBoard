@@ -1,7 +1,7 @@
 import { colors } from "@/theme";
 import { OpenInNew } from "@mui/icons-material";
 import { Box, Grid, IconButton, Stack, Typography } from "@mui/material";
-import dynamic from "next/dynamic";
+import moment from "moment";
 import React from "react";
 
 const BoardCard = ({ board, router }) => {
@@ -33,7 +33,7 @@ const BoardCard = ({ board, router }) => {
 
             <IconButton
               onClick={() => {
-                router.push(`/boards/${board?.id}`);
+                router.push(`/boards/${board?._id}`);
               }}
               size="small"
             >
@@ -41,7 +41,7 @@ const BoardCard = ({ board, router }) => {
             </IconButton>
           </Stack>
           <Typography variant="caption">
-            Created at: {board?.createdAt}
+            Created at: {moment(board?.createdAt).format("lll")}
           </Typography>
         </Stack>
       </Grid>
