@@ -11,6 +11,8 @@ import React, { useState } from "react";
 import ModalHeader from "../components/layout/ModalHeader";
 import { colors } from "@/theme";
 import useApp from "../hooks/useApp";
+import { LoadingButton } from "@mui/lab";
+import { Create } from "@mui/icons-material";
 
 const CreateBoardModal = ({ onClose }) => {
   const { createBoard } = useApp();
@@ -61,14 +63,25 @@ const CreateBoardModal = ({ onClose }) => {
             </Stack>
           </Stack>
 
-          <Button
+          {/* <Button
             disabled={loading || boardName?.length < 3}
             onClick={handleCreate}
             size="large"
             variant="contained"
           >
             Create
-          </Button>
+          </Button> */}
+          <LoadingButton
+            disabled={boardName?.length < 3}
+            loading={loading}
+            loadingPosition="start"
+            onClick={handleCreate}
+            startIcon={<Create />}
+            variant="contained"
+            size="large"
+          >
+            Create
+          </LoadingButton>
         </Stack>
       </Dialog>
     </>

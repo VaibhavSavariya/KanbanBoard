@@ -1,4 +1,6 @@
 import ModalHeader from "@/app/components/layout/ModalHeader";
+import { AddTask, Task } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
@@ -35,14 +37,17 @@ const AddTaskModal = ({ tabName, onClose, addTask, addTaskLoading }) => {
             />
           </Stack>
 
-          <Button
+          <LoadingButton
+            disabled={taskName?.length < 3}
+            loading={addTaskLoading}
+            loadingPosition="start"
             onClick={() => addTask(taskName)}
-            disabled={taskName?.length < 3 || addTaskLoading}
-            size="large"
+            startIcon={<AddTask />}
             variant="contained"
+            size="large"
           >
             Add task
-          </Button>
+          </LoadingButton>
         </Stack>
       </Dialog>
     </>

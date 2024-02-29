@@ -1,5 +1,5 @@
 "use client";
-import { Button, Container, Stack, Typography } from "@mui/material";
+import { Container, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import React, { useState } from "react";
 import LogoImg from "../../assets/logo.svg";
@@ -7,13 +7,13 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
-import useStore from "@/store";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 import users from "@/app/axios/services/users";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { LoginTwoTone } from "@mui/icons-material";
 const Login = () => {
   const Router = useRouter();
-  const { loader, setLoginState, isLoggedIn } = useStore();
   const [loading, setLoading] = useState(false);
   const [isLoggedInPage, setIsLoggedInPage] = useState(true);
 
@@ -110,21 +110,23 @@ const Login = () => {
                     )}
                   />
 
-                  <Button
+                  <LoadingButton
+                    loading={isSubmitting || loading}
+                    loadingPosition="start"
+                    onClick={submitForm}
+                    startIcon={<LoginTwoTone />}
                     variant="contained"
                     size="large"
-                    disabled={isSubmitting || loading}
-                    onClick={submitForm}
                   >
                     {isLoggedInPage ? "Login" : "Register"}
-                  </Button>
+                  </LoadingButton>
                 </Stack>
                 <Typography
                   onClick={() => {
                     setIsLoggedInPage(!isLoggedInPage);
                   }}
                   sx={{
-                    cursor: "pointer",
+                    cursor: isSubmitting || loading ? "no-drop" : "pointer",
                   }}
                   textAlign={"center"}
                   mt={3}
