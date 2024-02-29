@@ -54,9 +54,12 @@ const useApp = () => {
 
   const fetchBoards = async (setLoading) => {
     try {
-      const res = await fetch("http://localhost:3000/api//boards/getBoards", {
-        next: { revalidate: 0 },
-      });
+      const res = await fetch(
+        "https://kanban-board-ten-blond.vercel.app/api/boards/getBoards",
+        {
+          next: { revalidate: 0 },
+        }
+      );
       const data = await res.json();
       setBoards(data?.boards);
     } catch (error) {
