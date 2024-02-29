@@ -13,10 +13,18 @@ export const getBoards = () => {
 export const getBoardById = (id) => {
   return axiosClient.get(`/boards/getBoardById/${id}`);
 };
+export const deleteBoard = (id) => {
+  return axiosClient.delete(`/boards/deleteBoard/${id}`);
+};
+export const updateBoard = (id, data) => {
+  return axiosClient.put(`/boards/updateBoard/${id}`, data);
+};
 
 const boardsAPI = {
   createBoard,
   getBoards,
   getBoardById,
+  deleteBoard,
+  updateBoard,
 };
 export default boardsAPI;

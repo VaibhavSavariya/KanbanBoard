@@ -3,11 +3,11 @@ import BoardModel from "@/models/boards";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 connect();
-export async function POST(req) {
+export async function DELETE(req) {
   try {
     const token = cookies().get("token")?.value;
-    const reqBdy = await req.json();
-
+    const id = req.url.slice(req.url.lastIndexOf("/") + 1);
+    const boardById = await BoardModel.findById(id);
     if (!token) {
       const tokenRes = NextResponse.json(
         {
@@ -16,14 +16,21 @@ export async function POST(req) {
         { status: 400 }
       );
       return tokenRes;
+    } else if (!boardById) {
+      return NextResponse.json(
+        {
+          message: "Board not found",
+        },
+        { status: 404 }
+      );
     } else {
-      const board = await BoardModel.create(reqBdy);
+      await BoardModel.findByIdAndDelete(id);
       const response = NextResponse.json(
         {
-          message: "Board created successfully!",
-          board,
+          message: "Board deleted successfully!",
+          boardById,
         },
-        { status: 201 }
+        { status: 200 }
       );
       return response;
     }

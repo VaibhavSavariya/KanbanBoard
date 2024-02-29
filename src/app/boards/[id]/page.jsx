@@ -10,7 +10,6 @@ import AlertDialogSlide from "./AlertModal";
 import moment from "moment";
 
 const BoardId = ({ params }) => {
-  console.log("params:", params);
   const router = useRouter();
   const { boards, areBoardsFetched } = useStore();
   const [data, setData] = useState(null);

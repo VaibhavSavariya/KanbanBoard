@@ -3,11 +3,11 @@ import BoardModel from "@/models/boards";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 connect();
-export async function POST(req) {
+export async function PUT(req) {
   try {
     const token = cookies().get("token")?.value;
-    const reqBdy = await req.json();
-
+    const id = req.url.slice(req.url.lastIndexOf("/") + 1);
+    const reqBody = await req.json();
     if (!token) {
       const tokenRes = NextResponse.json(
         {
@@ -17,13 +17,16 @@ export async function POST(req) {
       );
       return tokenRes;
     } else {
-      const board = await BoardModel.create(reqBdy);
+      await BoardModel.findById(id);
+      const updatedBoard = await BoardModel.findByIdAndUpdate(id, reqBody, {
+        new: true,
+      });
       const response = NextResponse.json(
         {
-          message: "Board created successfully!",
-          board,
+          message: "Board udpated successfully!",
+          updatedBoard,
         },
-        { status: 201 }
+        { status: 200 }
       );
       return response;
     }

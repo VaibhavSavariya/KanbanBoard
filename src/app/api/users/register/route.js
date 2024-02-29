@@ -9,7 +9,6 @@ export async function POST(request) {
   try {
     const reqBody = await request.json();
     const { email, password } = reqBody;
-    console.log("reqBody", reqBody);
     // check if user already exists
     const user = await UserModel.findOne({ email });
     if (user) {
@@ -28,7 +27,6 @@ export async function POST(request) {
       password: hashedPassword,
     });
     const savedUser = await newUser.save();
-    console.log("savedUser", savedUser);
 
     //send verification Email
     return NextResponse.json({

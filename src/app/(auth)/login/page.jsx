@@ -1,46 +1,21 @@
 "use client";
-import {
-  Button,
-  Container,
-  InputAdornment,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Button, Container, Stack, Typography } from "@mui/material";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import LogoImg from "../../assets/logo.svg";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import * as Yup from "yup";
-import { onAuthStateChanged } from "@firebase/auth";
-import { auth } from "@/firebase";
-import { useQuery } from "@tanstack/react-query";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from "firebase/auth";
 import toast from "react-hot-toast";
 import useStore from "@/store";
-import AppLoader from "@/app/components/layout/loader/AppLoader";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 import users from "@/app/axios/services/users";
-import { getAccessToken } from "@/helpers/getAccessToken";
 const Login = () => {
   const Router = useRouter();
   const { loader, setLoginState, isLoggedIn } = useStore();
   const [loading, setLoading] = useState(false);
   const [isLoggedInPage, setIsLoggedInPage] = useState(true);
-
-  useEffect(() => {
-    const unSub = onAuthStateChanged(auth, (userDoc) => {
-      console.log("userDoc:", userDoc);
-      setLoginState(!!userDoc);
-      secureLocalStorage.setItem("Me", JSON.stringify(userDoc?.uid));
-    });
-
-    return () => unSub;
-  }, []);
 
   return (
     <>
@@ -73,24 +48,6 @@ const Login = () => {
               try {
                 setLoading(true);
                 if (isLoggedInPage) {
-                  // const userCredential = await signInWithEmailAndPassword(
-                  //   auth,
-                  //   values.email,
-                  //   values.password
-                  // );
-                  // const { user } = userCredential;
-                  // const jwt = await user.getIdToken();
-                  // const rawResponse = await fetch("/api/login", {
-                  //   method: "POST",
-                  //   headers: {
-                  //     Accept: "application/json",
-                  //     "Content-Type": "application/json",
-                  //   },
-                  //   body: JSON.stringify({ jwt }),
-                  // });
-                  // const content = await rawResponse.json();
-
-                  // console.log(content);
                   const res = await users.loginUser(values);
                   if (res?.status === 200) {
                     secureLocalStorage.setItem(

@@ -19,7 +19,6 @@ const Topbar = ({ openModal }) => {
   const handleLogOut = async () => {
     try {
       const res = await users.signOut();
-      console.log("res:", res);
       router.push("/login");
       router.refresh();
     } catch (error) {

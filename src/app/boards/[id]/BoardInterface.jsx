@@ -9,7 +9,7 @@ import { DragDropContext } from "react-beautiful-dnd";
 import AppLoader from "@/app/components/layout/loader/AppLoader";
 import toast from "react-hot-toast";
 const tabs = {
-  todo: "Todos",
+  todos: "Todos",
   inProgress: "In Progress",
   completed: "Completed",
 };

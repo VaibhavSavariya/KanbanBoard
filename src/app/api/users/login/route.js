@@ -39,7 +39,9 @@ export async function POST(req) {
       success: true,
       tokenData,
     });
-    cookies().set("token", token);
+    cookies().set("token", token, {
+      httpOnly: true,
+    });
     return response;
   } catch (error) {
     return NextResponse.json({ error: error.message });

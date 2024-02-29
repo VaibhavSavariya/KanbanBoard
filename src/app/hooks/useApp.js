@@ -1,28 +1,15 @@
 "use client";
-import { db } from "@/firebase";
 import useStore from "@/store";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  orderBy,
-  query,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import secureLocalStorage from "react-secure-storage";
 import boardsAPI from "../axios/services/boards";
+import moment from "moment";
 
 const useApp = () => {
   const { boards, setBoards, addBoard } = useStore();
   const router = useRouter();
   const uid = JSON.parse(secureLocalStorage.getItem("Me"));
-  const boardsColRef = collection(db, `users/${uid}/boards`);
 
   const createBoard = async (name, color) => {
     try {
@@ -34,17 +21,20 @@ const useApp = () => {
       addBoard(create?.data?.board);
       toast.success("Board Created Successfully!");
     } catch (error) {
-      // toast.error("Error creating board data");
+      console.log("error:", error);
+      toast.error(error?.response?.data?.message);
       throw error;
     }
   };
 
   const updateBoardData = async (boardId, tabs) => {
-    const DocRef = doc(db, `users/${uid}/boardsData/${boardId}`);
     try {
-      await updateDoc(DocRef, { tabs, lastUpdated: serverTimestamp() });
+      await boardsAPI.updateBoard(boardId, {
+        tabs,
+        updatedAt: moment(),
+      });
     } catch (error) {
-      toast.error("Error updating board data");
+      toast.error(error?.response?.data?.message);
       throw error;
     }
   };
@@ -57,15 +47,18 @@ const useApp = () => {
       }
     } catch (error) {
       toast.error("Error fetching board data");
+
       throw error;
     }
   };
 
   const fetchBoards = async (setLoading) => {
     try {
-      const res = await boardsAPI.getBoards();
-      console.log("res:", res);
-      setBoards(res?.data?.boards);
+      const res = await fetch("http://localhost:3000/api//boards/getBoards", {
+        next: { revalidate: 0 },
+      });
+      const data = await res.json();
+      setBoards(data?.boards);
     } catch (error) {
       toast.error("Error fetching boards");
       console.log("error:", error);
@@ -78,13 +71,13 @@ const useApp = () => {
 
   const deleteBoard = async (boardId) => {
     try {
-      const DocRef = doc(db, `users/${uid}/boardsData/${boardId}`);
-      await deleteDoc(DocRef);
-      const tBoards = boards.filter((board) => board?.id !== boardId);
+      await boardsAPI.deleteBoard(boardId);
+      const tBoards = boards.filter((board) => board?._id !== boardId);
       setBoards(tBoards);
       router.push("/boards");
+      toast.success("Board deleted successfully!");
     } catch (error) {
-      toast.error("Error deleting board data");
+      toast.error(error?.response?.data?.message);
       throw error;
     }
   };

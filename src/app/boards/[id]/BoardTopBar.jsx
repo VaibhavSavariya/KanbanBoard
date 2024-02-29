@@ -1,6 +1,7 @@
 import { colors } from "@/theme";
 import { ArrowBackSharp, Delete } from "@mui/icons-material";
 import { AppBar, IconButton, Stack, Toolbar, Typography } from "@mui/material";
+import moment from "moment";
 import React from "react";
 
 const BoardTopBar = ({ router, currentBoard, lastUpdated, openAlert }) => {
@@ -29,7 +30,7 @@ const BoardTopBar = ({ router, currentBoard, lastUpdated, openAlert }) => {
               variant="body2"
             >
               {" "}
-              Last Updated : {lastUpdated}
+              Last Updated : {moment(lastUpdated).format("lll")}
             </Typography>
             <IconButton size="small" onClick={openAlert}>
               <Delete />

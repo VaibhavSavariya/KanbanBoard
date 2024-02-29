@@ -9,9 +9,8 @@ import useApp from "../hooks/useApp";
 import NoBoards from "./NoBoards";
 import AppLoader from "../components/layout/loader/AppLoader";
 import { useRouter } from "next/navigation";
-import boardsAPI from "../axios/services/boards";
-import { useQuery } from "@tanstack/react-query";
 
+export const revalidate = 0;
 const Boards = () => {
   const { boards, areBoardsFetched } = useStore();
   const router = useRouter();
