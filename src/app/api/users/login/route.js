@@ -31,7 +31,7 @@ export async function POST(req) {
       email: user.email,
     };
     //create token
-    const token = await jwt.sign(tokenData, "KanBan@1312", {
+    const token = await jwt.sign(tokenData, process.env.TOKEN_SECRET, {
       expiresIn: "1h",
     });
     const response = NextResponse.json({

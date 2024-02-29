@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 
 export const axiosClient = axios.create();
 
-axiosClient.defaults.baseURL = `http://localhost:3000/api`;
+axiosClient.defaults.baseURL = `https://kanban-board-ten-blond.vercel.app/api`;
 
 axiosClient.defaults.headers = {
   "Content-Type": "application/json",
