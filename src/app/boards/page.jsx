@@ -10,18 +10,15 @@ import NoBoards from "./NoBoards";
 import AppLoader from "../components/layout/loader/AppLoader";
 import { useRouter } from "next/navigation";
 
-export const revalidate = 0;
 const Boards = () => {
-  const { boards, areBoardsFetched } = useStore();
+  const { boards } = useStore();
   const router = useRouter();
   const { fetchBoards } = useApp();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!areBoardsFetched) {
-      fetchBoards(setLoading);
-    } else setLoading(false);
+    fetchBoards(setLoading);
   }, []);
 
   return (

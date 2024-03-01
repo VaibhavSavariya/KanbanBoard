@@ -7,7 +7,7 @@ import boardsAPI from "../axios/services/boards";
 import moment from "moment";
 
 const useApp = () => {
-  const { boards, setBoards, addBoard } = useStore();
+  const { boards, setBoards, addBoard, areBoardsFetched } = useStore();
   const router = useRouter();
   const uid = JSON.parse(secureLocalStorage.getItem("Me"));
 
@@ -55,16 +55,17 @@ const useApp = () => {
   const fetchBoards = async (setLoading) => {
     try {
       const res = await fetch(
-        "https://kanban-board-ten-blond.vercel.app/api/boards/getBoards",
-        {
-          next: { revalidate: 0 },
-        }
+        `https://kanban-board-ten-blond.vercel.app/api/boards/getBoards/${uid}`,
+
+        { next: { revalidate: 0 } }
       );
       const data = await res.json();
       setBoards(data?.boards);
+      setLoading(false);
     } catch (error) {
       toast.error("Error fetching boards");
       console.log("error:", error);
+      setLoading(false);
     } finally {
       if (setLoading) {
         setLoading(false);

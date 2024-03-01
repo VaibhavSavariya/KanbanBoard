@@ -2,11 +2,12 @@ import connect from "@/db";
 import BoardModel from "@/models/boards";
 import { NextResponse } from "next/server";
 connect();
-export async function GET() {
+export async function GET(req) {
   try {
+    const id = req.url.slice(req.url.lastIndexOf("/") + 1);
     const boards = await BoardModel.find(
-      {},
-      { _id: true, name: true, color: true, createdAt: true }
+      { userRef: id },
+      { _id: true, name: true, color: true, createdAt: true, userRef: true }
     ).sort({
       createdAt: -1,
     });
