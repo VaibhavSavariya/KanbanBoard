@@ -100,16 +100,14 @@ const BoardInterface = ({ tabsData, boardId, updateLastUpdated }) => {
           <DragDropContext onDragEnd={handleDnd}>
             <Grid container px={2} mt={5} spacing={2}>
               {Object.keys(tabs).map((tab) => (
-                <>
-                  <BoardTab
-                    tasks={cloneTabs[tab]}
-                    addTask={handleOpenAddTaskModal}
-                    key={tab}
-                    name={tabs[tab]}
-                    tab={tab}
-                    removeTask={handleRemoveTask}
-                  />
-                </>
+                <BoardTab
+                  tasks={cloneTabs[tab]}
+                  addTask={handleOpenAddTaskModal}
+                  key={tab}
+                  name={tabs[tab]}
+                  tab={tab}
+                  removeTask={handleRemoveTask}
+                />
               ))}
             </Grid>
           </DragDropContext>

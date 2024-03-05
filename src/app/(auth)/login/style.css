@@ -1,0 +1,27 @@
+.otpInput input {
+  width: 70px;
+  line-height: 55px;
+  font-size: 32px;
+  border: none;
+  background-color: #eaf5f6;
+  border-radius: 5px;
+  text-align: center;
+  color: #093030;
+  margin-bottom: 25px;
+}
+.otpInput input:focus {
+  outline: none;
+}
+.otpInput input.filled {
+  outline: 2px solid rgb(7, 192, 99);
+}
+
+section {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-around;
+  border-radius: 12px;
+  padding: 12px;
+  gap: 20px;
+}

@@ -10,7 +10,7 @@ connect();
 export async function POST(req) {
   try {
     const reqBdy = await req.json();
-    const { email, password } = reqBdy;
+    const { email, password, rememberMe } = reqBdy;
     // check if user exists
 
     const user = await UserModel.findOne({ email });
@@ -32,7 +32,7 @@ export async function POST(req) {
     };
     //create token
     const token = await jwt.sign(tokenData, process.env.TOKEN_SECRET, {
-      expiresIn: "1h",
+      expiresIn: rememberMe ? "7d" : "8h",
     });
     const response = NextResponse.json({
       message: "Login Successful",

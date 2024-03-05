@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import connect from "@/db";
 import UserModel from "@/models/users";
+import { sendEmail } from "@/helpers/mailer";
 
 connect();
 
@@ -16,24 +17,34 @@ export async function POST(request) {
         { error: "User already exists" },
         { status: 400 }
       );
+    } else {
+      //hash password
+
+      const salt = await bcryptjs.genSalt(10);
+      const hashedPassword = await bcryptjs.hash(password, salt);
+      const uniqueString = Math.floor(Math.random() * 9000);
+
+      const newUser = new UserModel({
+        email,
+        password: hashedPassword,
+        uniqueString,
+      });
+      const savedUser = await newUser.save();
+
+      //send verification Email
+      await sendEmail({ email, uniqueString });
+      const response = NextResponse.json(
+        {
+          message: "OTP has been sent successfully to your mail.",
+          success: true,
+          savedUser,
+        },
+        {
+          status: 201,
+        }
+      );
+      return response;
     }
-    //hash password
-
-    const salt = await bcryptjs.genSalt(10);
-    const hashedPassword = await bcryptjs.hash(password, salt);
-
-    const newUser = new UserModel({
-      email,
-      password: hashedPassword,
-    });
-    const savedUser = await newUser.save();
-
-    //send verification Email
-    return NextResponse.json({
-      message: "User Created Successfully!",
-      success: true,
-      savedUser,
-    });
   } catch (error) {
     console.log("error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

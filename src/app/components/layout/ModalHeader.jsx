@@ -11,8 +11,8 @@ const ModalHeader = ({ title, onClose }) => {
         direction={"row"}
       >
         <Typography variant="h6">{title}</Typography>
-        <IconButton size="small">
-          <Close onClick={onClose} />
+        <IconButton onClick={onClose} size="small">
+          <Close />
         </IconButton>
       </Stack>
     </>

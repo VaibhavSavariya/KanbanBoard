@@ -33,9 +33,7 @@ const Boards = () => {
           <Stack px={3} mt={5} mb={5}>
             <Grid container spacing={{ xs: 2, sm: 4 }}>
               {boards.map((board, index) => (
-                <>
-                  <BoardCard board={board} key={board?._id} router={router} />
-                </>
+                <BoardCard board={board} key={board?._id} router={router} />
               ))}
             </Grid>
           </Stack>

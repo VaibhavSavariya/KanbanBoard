@@ -21,16 +21,16 @@ export const loginWithGoogle = (data) => {
 export const signOut = () => {
   return axiosClient.get(`/users/logout`);
 };
-export const tempsOut = () => {
-  return axiosClient.get(`/users/temps`);
+export const verifyEmail = (uniqueString) => {
+  return axiosClient.post(`/users/verifyEmail`, uniqueString);
 };
 
 const users = {
-  tempsOut,
   registerUser,
   loginUser,
   getUser,
   loginWithGoogle,
   signOut,
+  verifyEmail,
 };
 export default users;
