@@ -10,7 +10,6 @@ export async function POST(request) {
   try {
     const reqBody = await request.json();
     const { email, password, mobileUser } = reqBody;
-    console.log("mobileUser:", mobileUser);
     // check if user already exists
     const user = await UserModel.findOne({ email });
     if (user) {

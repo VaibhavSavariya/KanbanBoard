@@ -26,7 +26,6 @@ const Login = () => {
   const [isVerifyPage, setIsVerifyPage] = useState(false);
   const [otp, setOtp] = useState("");
   const isXs = useMediaQuery((theme) => theme.breakpoints.only("xs"));
-  console.log("isXs:", isXs);
   const otpRef = [useRef(), useRef(), useRef(), useRef()];
   const handleOtp = (index, e) => {
     const value = otpRef[index].current.value;
