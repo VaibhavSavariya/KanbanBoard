@@ -9,7 +9,8 @@ connect();
 export async function POST(request) {
   try {
     const reqBody = await request.json();
-    const { email, password } = reqBody;
+    const { email, password, mobileUser } = reqBody;
+    console.log("mobileUser:", mobileUser);
     // check if user already exists
     const user = await UserModel.findOne({ email });
     if (user) {
@@ -32,7 +33,7 @@ export async function POST(request) {
       const savedUser = await newUser.save();
 
       //send verification Email
-      await sendEmail({ email, uniqueString });
+      !mobileUser ? await sendEmail({ email, uniqueString }) : null;
       const response = NextResponse.json(
         {
           message: "OTP has been sent successfully to your mail.",

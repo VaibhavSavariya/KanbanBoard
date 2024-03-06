@@ -1,5 +1,11 @@
 "use client";
-import { Checkbox, Container, Stack, Typography } from "@mui/material";
+import {
+  Checkbox,
+  Container,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import LogoImg from "../../assets/logo.svg";
@@ -19,6 +25,8 @@ const Login = () => {
   const [isLoggedInPage, setIsLoggedInPage] = useState(true);
   const [isVerifyPage, setIsVerifyPage] = useState(false);
   const [otp, setOtp] = useState("");
+  const isXs = useMediaQuery((theme) => theme.breakpoints.only("xs"));
+  console.log("isXs:", isXs);
   const otpRef = [useRef(), useRef(), useRef(), useRef()];
   const handleOtp = (index, e) => {
     const value = otpRef[index].current.value;
@@ -71,7 +79,7 @@ const Login = () => {
 
   return (
     <>
-      {isVerifyPage ? (
+      {!isXs && isVerifyPage ? (
         <>
           <Container
             maxWidth="xs"
@@ -140,7 +148,7 @@ const Login = () => {
                         )}
                       />
                       <LoadingButton
-                        loading={isSubmitting}
+                        loading={isSubmitting || loading}
                         loadingPosition="start"
                         onClick={handleOtpSubmit}
                         startIcon={<VpnKeySharp />}
@@ -181,6 +189,7 @@ const Login = () => {
                   email: "",
                   password: "",
                   rememberMe: false,
+                  mobileUser: false,
                 }}
                 validationSchema={Yup.object({
                   password: Yup.string()
@@ -207,14 +216,23 @@ const Login = () => {
                       }
                       resetForm();
                     } else {
-                      const res = await users.registerUser(values);
-                      if (res.status === 201) {
+                      if (!isXs) {
+                        const res = await users.registerUser(values);
                         setIsVerifyPage(true);
                         setIsLoggedInPage(false);
                         setLoading(false);
                         toast.success(
                           "Otp has been sent to your mail address."
                         );
+                        resetForm();
+                      } else if (isXs) {
+                        const res = await users.registerUser({
+                          ...values,
+                          mobileUser: true,
+                        });
+                        setIsLoggedInPage(true);
+                        setLoading(false);
+                        toast.success("User registered successfully!");
                       }
                       resetForm();
                     }
@@ -271,22 +289,24 @@ const Login = () => {
                           </p>
                         )}
                       />
-                      <label
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <Checkbox
-                          name="rememberMe"
-                          label="Remember Me"
-                          onChange={handleChange}
-                          disabled={isSubmitting || loading}
-                        />
-                        Remember Me
-                      </label>
+                      {isLoggedInPage ? (
+                        <label
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <Checkbox
+                            name="rememberMe"
+                            label="Remember Me"
+                            onChange={handleChange}
+                            disabled={isSubmitting || loading}
+                          />
+                          Remember Me
+                        </label>
+                      ) : null}
                       <LoadingButton
                         loading={isSubmitting || loading}
                         loadingPosition="start"
